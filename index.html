@@ -12,7 +12,9 @@
     
   </head>
 
-  <body ng-controller="MyController" class="ng-scope">
+  <body ng-controller="MyController" class="php">
+  <div id="container">
+  <div id="main" role="main" class="hellobox">
 
     <!-- CHAT MARKUP -->
     <div class='example-chat l-demo-container'>
@@ -33,6 +35,8 @@
       <footer>
         <input ng-model='msg' ng-keydown="addMessage($event)" type='text' id='messageInput'  placeholder='When is your birthday?'>
       </footer>
+    </div>
+    </div>
     </div>
     <script>
       var myApp = angular.module("myApp", ["firebase"]);
