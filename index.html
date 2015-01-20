@@ -9,7 +9,8 @@
     <link rel='stylesheet' href='http://firebase.com/resources/tutorial/css/example.css'/>
     <link rel="stylesheet" href="//koding.com/hello/css/style.css">
     <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-    
+    <link rel="stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
   </head>
 
   <body ng-controller="MyController" class="php">
@@ -43,6 +44,150 @@
   <footer>
     <h4>Tell us your birthday!</h4>
     <p>Don't forget to check out Amanda's chatroom!</p>
+    <div class="container">
+
+<h3>Feedback</h3>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Comments</th>
+      <th>Edit</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="user in users">
+      <td>
+        {{ user.fName }}
+      </td>
+      <td>{{ user.comments }}</td>
+      <td><button class="btn" ng-click="editUser(user.id)">
+          <span class="glyphicon glyphicon-pencil"></span>  Edit
+        </button></td>
+      <td>
+        <button class="btn" ng-click="deleteUser(user.id)">
+          <span class="glyphicon glyphicon-pencil"></span>  Delete
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+<button class="btn btn-success" ng-click="editUser('new')">
+<span class="glyphicon glyphicon-user"></span>  Create New User
+</button>
+<hr>
+
+
+<h3 ng-show="edit">Add New Feedback:</h3>
+<h3 ng-hide="edit">Edit Feedback:</h3>
+
+<form class="form-horizontal">
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Name:</label>
+    <div class="col-sm-10">
+    <input type="text" ng-model="fName" ng-disabled="!edit" placeholder="First Name">
+    </div>
+  </div> 
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Comments:</label>
+    <div class="col-sm-10">
+    <input type="text" ng-model="comments" ng-disabled="!edit" placeholder="Comments">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Password:</label>
+    <div class="col-sm-10">
+    <input type="password" ng-model="passw1" placeholder="Password">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Repeat:</label>
+    <div class="col-sm-10">
+    <input type="password" ng-model="passw2" placeholder="Repeat Password">
+    </div>
+  </div>
+</form>
+
+<hr>
+<button class="btn btn-success" ng-disabled="error || incomplete" ng-click="save()">
+<span class="glyphicon glyphicon-save"></span>  Save Changes
+</button>
+
+</div>
+
+<script>
+  function userController($scope) {
+    $scope.fName = '';
+    $scope.comments = '';
+    $scope.passw1 = '';
+    $scope.passw2 = '';
+    
+    //We can replace this with a Firebase url later on. 
+    $scope.users = [
+        {id:1, fName:'Hege'  , comments:"This App rocks" },
+        {id:2, fName:'Kim'   , comments:"This app sucks" },
+        {id:3, fName:'Jack'  , comments:"What is the point of this app?" }
+    ];
+    
+    $scope.edit = true;
+    $scope.error = false;
+    $scope.incomplete = false;  
+    
+    
+    $scope.editUser = function(id) {
+        $scope.currentId = id;
+        if (id == 'new') {
+            $scope.edit = true;
+            $scope.incomplete = true;
+            $scope.fName = '';
+            $scope.comments = '';
+            console.log("new user.");
+        } else {
+            $scope.edit = true;
+            $scope.fName = $scope.users[id-1].fName;
+            $scope.comments = $scope.users[id-1].comments; 
+            console.log("existing user.");
+        }
+    };
+    
+    $scope.$watch('passw1',function() {$scope.test();});
+    $scope.$watch('passw2',function() {$scope.test();});
+    $scope.$watch('fName', function() {$scope.test();});
+    $scope.$watch('comments', function() {$scope.test();});
+    $scope.test = function() {
+        if ($scope.passw1 !== $scope.passw2) {
+            $scope.error = true;
+        } else {
+            $scope.error = false;
+        }
+        $scope.incomplete = false;
+        if ($scope.edit && (!$scope.fName.length || !$scope.comments.length|| !$scope.passw1.length || !$scope.passw2.length)) {
+            $scope.incomplete = true;
+        }
+    };
+    $scope.save = function(){
+      //Add new if no index is passed in.
+      if($scope.currentId=='new'){
+        //Using the array length as the next index while prototyping. 
+        $scope.users.push({id:$scope.users.length+1, fName:$scope.fName  , comments:$scope.comments });
+      }
+      else{
+        $scope.users[$scope.currentId-1].fName = $scope.fName;
+        $scope.users[$scope.currentId-1].comments = $scope.comments;
+      }
+    };
+    
+    $scope.deleteUser = function(index){
+      $scope.users.splice(index-1, 1);
+    }
+    
+    }
+  
+</script>
   </footer>
     </div>
     <script>
